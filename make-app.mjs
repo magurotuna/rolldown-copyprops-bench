@@ -20,7 +20,7 @@ for (let i = 0; i < args.length; i++) {
   else throw new Error(`unknown argument: ${args[i]}`);
 }
 
-// `__copyProps` from the PR (crates/rolldown/src/runtime/runtime-base.js).
+// `__copyProps` from rolldown/rolldown#11826 (crates/rolldown/src/runtime/runtime-base.js).
 const PR_COPY_PROPS = `(to, from, except, desc) => {
   if ((from && typeof from === 'object') || typeof from === 'function') {
     for (let key of __getOwnPropNames(from)) {

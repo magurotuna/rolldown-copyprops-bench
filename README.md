@@ -1,6 +1,6 @@
 # Benchmark: bound getters in Rolldown's `__copyProps`
 
-This benchmark measures how fast bundled code reads an export through a namespace object that Rolldown builds between CommonJS and ES modules. It compares the `__copyProps` runtime helper of Rolldown 1.3.3, which makes each getter a bound function, with the version from [this change](https://github.com/magurotuna/rolldown/commit/2677d6626c5da00614eeb63fb1f5872bedfbf1f9), which makes each getter a closure.
+This benchmark measures how fast bundled code reads an export through a namespace object that Rolldown builds between CommonJS and ES modules. It compares the `__copyProps` runtime helper of Rolldown 1.3.3, which makes each getter a bound function, with the version from [rolldown/rolldown#11826](https://github.com/rolldown/rolldown/pull/11826), which makes each getter a closure.
 
 ## Quick start (Node only)
 
@@ -31,7 +31,7 @@ ns for one call of __hot() (cjsmix-1000, median of 5 processes, lower is better)
    - An ES module imports its first child with a named import and its second child with `import * as`. A CommonJS module uses `require()`.
    - The entry defines `globalThis.__hot`. A call of `__hot` walks down the tree and reads exports through the namespace objects.
 2. `make-app.mjs` bundles the app with Rolldown into one IIFE file, `before.js`.
-3. `make-app.mjs` writes `after.js`: a copy of `before.js` in which `__copyProps` is replaced with the code from the change. Rolldown built from the change writes the same function; only the formatting differs.
+3. `make-app.mjs` writes `after.js`: a copy of `before.js` in which `__copyProps` is replaced with the code from the PR. Rolldown built from the PR writes the same function; only the formatting differs.
 4. `make-app.mjs` checks that `before.js` and `after.js` return the same values.
 5. `run.mjs` starts a new process of `drive.js` for each measurement and prints the median.
    - `drive.js` calls `__hot` 2,000,000 times in each of 9 rounds, and prints the fastest round in ns per call.
@@ -50,7 +50,7 @@ node run.mjs --cpu 7 node=$(command -v node) bun=engines/bin/bun d8=engines/bin/
 - Each engine is a `name=path` argument. The name must start with `node`, `bun`, `d8`, `jsc`, or `sm`, so that `run.mjs` knows how to pass the arguments. For example, `jsc-safari27=/path/to/jsc` is a JavaScriptCore shell.
 - `--cpu 7` pins each process to CPU 7 with `taskset`. Remove it on a system without `taskset`.
 - `--rounds N` sets the number of processes for each engine and bundle (default: 5).
-- To use your own Rolldown build, run `node make-app.mjs --rolldown <path to packages/rolldown>`. The build must be from before the change, because `make-app.mjs` replaces the bound getters.
+- To use your own Rolldown build, run `node make-app.mjs --rolldown <path to packages/rolldown>`. The build must be from before the PR, because `make-app.mjs` replaces the bound getters.
 
 ### Safari's JavaScriptCore
 
